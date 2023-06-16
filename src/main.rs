@@ -1,160 +1,110 @@
-use rand::Rng;
-use std::{cmp::Ordering, io, process::Command};
+use std::env;
+use std::process;
+
+use rust_learn::Config;
+
+// fn main() {
+//     let args: Vec<String> = env::args().collect();
+
+//     let config = Config::build(env::args()).unwrap_or_else(|err| {
+//         eprintln!("error, {}", err);
+
+//         process::exit(1)
+//     });
+
+//     if let Err(e) = rust_learn::run(config) {
+//         eprintln!("error, {}", e);
+//         process::exit(1)
+//     }
+
+//     // println!("config, {:?}", config)
+// }
+
+// #[derive(Debug, PartialEq, Clone, Copy)]
+// enum ShirtColor {
+//     Red,
+//     Blue
+// }
+
+// struct Inventory {
+//     shirts: Vec<ShirtColor>
+// }
+
+// impl Inventory {
+//     fn giveaway(&self, user_preference: Option<ShirtColor>) -> ShirtColor {
+//         user_preference.unwrap_or_else(|| self.most_stocked())
+//     }
+
+//     fn most_stocked(&self) -> ShirtColor {
+//         let mut num_red = 0;
+//         let mut num_blue = 0;
+
+//         for color in &self.shirts {
+//             match color {
+//                 ShirtColor::Red => num_red += 1,
+//                 ShirtColor::Blue => num_blue += 1
+//             }
+//         }
+
+//         if num_red > num_blue {
+//             ShirtColor::Red
+//         } else {
+//             ShirtColor::Blue
+//         }
+//     }
+// }
+
+
+use std::thread;
+use std::time::Duration;
+use std::sync::mpsc;
 
 fn main() {
-    let mut x = 10;
+    // let handle = thread::spawn(|| {
+    //     for i in 1..10 {
+    //         println!("spawned thredd {}", i);
 
-    x = 3;
+    //         thread::sleep(Duration::from_millis(1000))
+    //     }
+    // });
 
-    const FUCK: i64 = 12 * 45;
+    // for i in 1..5 {
+    //     println!("main thread {}", i);
 
-    let y = 0xff;
+    //     thread::sleep(Duration::from_millis(1000))
+    // }
 
-    let z = 4.5;
+    // handle.join().unwrap();
 
-    let xx = true;
+    // thread::spawn(|| {
+    //     for i in 11..13 {
+    //         println!("spawned another thredd {}", i);
 
-    let ch = 'f';
+    //         thread::sleep(Duration::from_millis(1000))
+    //     }
+    // }).join().unwrap();
 
-    let tup = ('f', 23, true);
+    // let v = vec![1, 2, 3];
 
-    let (a, b, c) = tup;
+    // let handle = thread::spawn(move || {
+    //     println!("Here are {:?}", v);
+    // });
 
-    let arr = [23, 54, 324];
+    // handle.join().unwrap();
 
-    println!("Guess the number");
+    let ( tx, rx ) = mpsc::channel();
 
-    let secret_number = rand::thread_rng().gen_range(1..100);
+    thread::spawn(move || {
+        let val = String::from("Hi");
 
-    // println!("your secret_numb is: {secret_number}");
+        tx.send(val).unwrap();
 
-    loop {
-        println!("Please input your gusess");
+        // println!("{val}");
+    });
 
-        let mut guess = String::new();
+    let received = rx.recv().unwrap();
 
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
+    println!("got: {}", received);
 
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                println!("please input a number");
-                continue;
-            }
-        };
 
-        println!("your guess: {guess}");
-
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("too small"),
-            Ordering::Equal => {
-                println!("you win");
-                break;
-            }
-            Ordering::Greater => println!("too big"),
-        }
-    }
-
-    ant_fuck(23);
-
-    let _ = Command::new("cmd.exe").arg("/c").arg("pause").status();
-}
-
-/** fuck */
-fn ant_fuck(x: i32) {
-    println!("anot func, {x}");
-}
-
-fn five() -> i64 {
-    6;
-
-    if 2 < 4 {
-        println!("fuck")
-    }
-
-    let a = if true { 3 } else { 5 };
-
-    'label: loop {
-        println!("432532");
-
-        loop {
-            break 'label;
-        }
-    }
-
-    for e in 34..345 {
-        println!("{e}");
-    }
-
-    let mut s = String::from("hello");
-
-    s.push_str("string");
-
-    calc_len(&mut s);
-
-    let s2 = s;
-
-    let s3 = "fdfdfdf";
-
-    return 34;
-}
-
-fn calc_len(s: &mut String) -> usize {
-    s.push_str("fuck your mother");
-    let mut user = User {
-        name: String::from("crf"),
-        age: 23,
-        email: String::from("dfdf"),
-    };
-
-    user.age = 4;
-
-    println!("{:#?}", user);
-
-    let mut i = IP::V6(String::from("fuck"));
-
-    i = IP::V4(String::from("do"));
-
-    i.call();
-
-    let some = Option::Some(43);
-
-    let some1: Option<i32> = Some(12);
-
-    return s.len();
-}
-
-#[derive(Debug)]
-struct User {
-    name: String,
-    age: i32,
-    email: String,
-}
-
-impl User {
-    fn test(&self) -> &String {
-        &self.name
-    }
-}
-
-struct Vector2(i32, i32);
-
-enum IP {
-    V4(String),
-    V6(String)
-}
-
-impl IP {
-    fn call(&self) {
-
-    }
-}
-
-fn testIP(ip: IP) -> i32 {
-    match ip {
-        IP::V4(_) => 5,
-        IP::V6(_) => 2
-    }
 }
